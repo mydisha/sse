@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Short Poll</title>
+</head>
+<body>
+<h1>Short Poll</h1>
+<form action="http://localhost:" method="post">
+    <p>
+        <label for="order_mask_id">Order Mask ID</label>
+        <input type="text" name="order_mask_id" id="order_mask_id">
+    </p>
+    <p>
+        <label>Status :</label>
+        <label id="status">-</label>
+    </p>
+    <p>
+        <input type="button" id="submit" value="Submit">
+    </p>
+</form>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(document).ready(function () {
+        function sendPool(orderMaskId) {
+            $.ajax({
+                url: "http://localhost:8080/pool",
+                type: "GET",
+                async: true,
+                data: {
+                    orderMaskId: orderMaskId
+                },
+                success: function (data) {
+                    if (!data.status) {
+                        setTimeout(function () {
+                            console.log('poolPayload not success');
+                            sendPool(orderMaskId)
+                        }, 2000);
+                    } else {
+                        $('#status').text("Order virtual account active!");
+                    }
+                }
+            });
+        }
+
+        $('#submit').click(function () {
+            $.ajax({
+                url: 'http://localhost:8080/insert',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    order_mask_id: $('#order_mask_id').val(),
+                    status: false
+                }),
+                success: function (data) {
+                    $('#status').text("Waiting callback...");
+                    sendPool($('#order_mask_id').val());
+                }
+            });
+        });
+    });
+</script>
+</html>

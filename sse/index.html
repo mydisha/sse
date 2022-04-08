@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE</title>
+</head>
+<body>
+Testing SSE
+<br>
+
+<script>
+    var source = new EventSource('http://localhost:8000/events', {
+        id: Math.floor(Math.random() * 1000000),
+    });
+
+    source.onmessage = function (e) {
+        console.log(e.data);
+    };
+</script>
+</body>
+</html>
